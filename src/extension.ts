@@ -17,13 +17,13 @@ let movingAverage = {chars: 0, lines: 0};
 let standardThemeConfig: Record<string, {[ColorTypes.statusBackground]: string, [ColorTypes.statusDebuggingBackground]: string}>;
 let isFlowState = false;
 
-const charsToFlow = 4;
-
 
 // Immutable values
+const minutes = 0.5;
+const timePeriod = 4;
+const charsToFlow = 10;
 const dimColor = 80;
 const timeline: Array<{time: number, lines: number, characters: number}> = [];
-
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -148,11 +148,12 @@ const getNumberOfSelectedLines = (editor: vscode.TextEditor | undefined): number
 
 const startPolling = () => {
 
-	const minutes = 1;
-
     const pollingInterval = minutes * 60 * 1000; // Poll every x min
 
 	const addTimelineEntry = () => {
+		// vscode.window.showInformationMessage('Polling!');
+		// vscode.window.showInformationMessage(`${movingAverage.chars}`);
+		
 		const time = new Date().getTime(); // Current time in ms
 
 		timeline.push({time, lines: addedLinesTotal, characters: addedCharactersTotal}); // Add added characters in last time interval
@@ -162,17 +163,14 @@ const startPolling = () => {
 		addedLinesTotal = 0;
 
 		// Only select timeperiod for moving average
-		const timePeriod = 3;
 
 		const movingTotal = timeline.slice(-timePeriod).reduce((acc, curr) => {
 			return {chars: acc.chars + curr.characters, lines: acc.lines + curr.lines};
 		}, {chars:0, lines:0});
 
-		if(timeline.length >= timePeriod){
-			// Set moving average
-			movingAverage = {chars: movingTotal.chars / timePeriod, lines: movingTotal.lines / timePeriod};
-		}
-
+		// Set moving average
+		movingAverage = {chars: movingTotal.chars / timePeriod, lines: movingTotal.lines / timePeriod};
+		
 		updateView();
 	};
 
