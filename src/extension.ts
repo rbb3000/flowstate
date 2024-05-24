@@ -17,7 +17,7 @@ let movingAverage = {chars: 0, lines: 0};
 let standardThemeConfig: Record<string, {[ColorTypes.statusBackground]: string, [ColorTypes.statusDebuggingBackground]: string}>;
 let isFlowState = false;
 
-const charsToFlow = 10;
+const charsToFlow = 4;
 
 
 // Immutable values
