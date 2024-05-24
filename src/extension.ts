@@ -1,8 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { exec } from 'child_process';
-import * as path from 'path';
 import { darkenHexColor } from './functions';
 
 // Types
@@ -17,13 +15,13 @@ let addedLinesTotal = 0;
 let addedCharactersTotal = 0;
 let movingAverage = {chars: 0, lines: 0};
 let standardThemeConfig: Record<string, {[ColorTypes.statusBackground]: string, [ColorTypes.statusDebuggingBackground]: string}>;
-let statusBarBackground: string;
-let statusBarDebuggingBackground: string;
 let isFlowState = false;
+
+const charsToFlow = 10;
 
 
 // Immutable values
-const dimColor = 200;
+const dimColor = 80;
 const timeline: Array<{time: number, lines: number, characters: number}> = [];
 
 
@@ -37,15 +35,15 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// TODO: test for light and dark theme
 
-	// Update the workbench color customizations
+	// update the workbench color customizations
 	const config = vscode.workspace.getConfiguration();
 
     const colorCustomizations: any = config.get('colorCustomizations') || {};
 
-	//TODO: check if user has custom theme installed
+	// check if user has custom theme installed
 
 	if(Object.keys(colorCustomizations).length > 0){
-		// TODO: Handle it if user has custom theme
+		// handle it if user has custom theme
 		standardThemeConfig = colorCustomizations;
 	} else {
 		standardThemeConfig = {...colorCustomizations, [ColorTypes.statusBackground]: (colorCustomizations[ColorTypes.statusBackground] ? colorCustomizations[ColorTypes.statusBackground] : '#007acc'), [ColorTypes.statusDebuggingBackground]: colorCustomizations[ColorTypes.statusDebuggingBackground] ? colorCustomizations[ColorTypes.statusDebuggingBackground] : '#007acc'};
@@ -55,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// register a command that is invoked when the status bar
 	// item is selected
-	const myCommandId = 'flowstate.showSelectionCount';
+	const myCommandId = 'flowstate.start';
 	context.subscriptions.push(vscode.commands.registerCommand(myCommandId, () => {
 		const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
 		startPolling();
@@ -127,12 +125,12 @@ const updateAddedContent = (e: vscode.TextDocumentChangeEvent) => {
 };
 
 const updateView = (): void => {
-	if(!isFlowState && movingAverage.chars > 2){ // define flow state
+	if(!isFlowState && movingAverage.chars > charsToFlow){ // define flow state
 		updateThemeColor();
 		myStatusBarItem.text = `$(rocket)`;
 		myStatusBarItem.show();
 		isFlowState = true;
-	} else if (isFlowState && movingAverage.chars <= 2) {
+	} else if (isFlowState && movingAverage.chars <= charsToFlow) {
 		resetThemeColor();
 		myStatusBarItem.text = `$(coffee)`;
 		myStatusBarItem.show();
@@ -150,7 +148,7 @@ const getNumberOfSelectedLines = (editor: vscode.TextEditor | undefined): number
 
 const startPolling = () => {
 
-	const minutes = 0.1;
+	const minutes = 1;
 
     const pollingInterval = minutes * 60 * 1000; // Poll every x min
 

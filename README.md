@@ -1,24 +1,37 @@
+<img src="images/flowstateicon.png" width="200" />
+
 # flowstate README
 
-Hello, fellow connoisseur of the flow state.
+Hello, fellow connoisseur of the Flow State.
 
 <img href="https://dribbble.com/shots/8553709-Flow-state" target="_blank" src="images/lais-lara-flowstate.gif" width="320" />
 
+
+## 
+
 ## Implemented Features
 
-* Detect flow state using basic logic
+* Detect Flow State using basic logic
 * Show the current state in the status bar
-* Dim the theme colors when in flow state
+* Dim the theme colors when in Flow State
+
+Normal State Icon (Status Bar) 
+
+<img src="images/coffee.png" width="40" />
+
+Flow State (Status Bar)
+
+<img src="images/rocket.png" width="40" />
 
 ## Next up
 
-* Keep the flow state alive by disabling as many disturbances as possible
+* Keep the Flow State alive by disabling as many disturbances as possible
     * Disable notifications in VScode
     * Disable desktop notifications
     * Integrate Slack to set status
 
-* More advanced detection of the flow state using a self trained machine learning model
-    * Train the model with a few developers that rate their flow state regularly (eg every 20 min)
+* More advanced detection of the Flow State using a self trained machine learning model
+    * Train the model with a few developers that rate their Flow State regularly (eg every 20 min)
     * Ship the model to a wider user base that provide ratings only on a daily basis
     * Ship the model to everyone
 
@@ -27,10 +40,10 @@ Hello, fellow connoisseur of the flow state.
 * Time tracking
 * Web dashboard to see time coded and flow periods
 * Smart time tracking that summarizes topics worked on
-* Set music when in flow state
-* Integrate Teams to set do not disturb status when in flow state
-* Integrate Outlook to set blockers in calendar when in flow state
-* Integrate Outlook to set blockers in calendar when in flow state
+* Set music when in Flow State
+* Integrate Teams to set do not disturb status when in Flow State
+* Integrate Outlook to set blockers in calendar when in Flow State
+* Integrate Outlook to set blockers in calendar when in Flow State
 
 ## Requirements
 
@@ -49,10 +62,10 @@ No known issues yet.
 
 ## Release Notes
 
-### 1.0.0
+### 0.0.1
 
-Initial release of flow state
+Initial release of Flow State
 
-* Detect flow state using basic logic
+* Detect Flow State using basic logic
 * Show the current state in the status bar
-* Dim the theme colors when in flow state
+* Dim the theme colors when in Flow State

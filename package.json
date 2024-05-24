@@ -3,6 +3,8 @@
   "displayName": "flowstate",
   "description": "",
   "version": "0.0.1",
+  "publisher": "roman.ninja",
+  "icon": "images/flowstateicon.png",
   "engines": {
     "vscode": "^1.89.0"
   },
@@ -14,8 +16,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "flowstate.showSelectionCount",
-        "title": "Flow State Selection Count Sample"
+        "command": "flowstate.start",
+        "title": "Launch Flow State"
       }
     ]
   },
@@ -47,5 +49,10 @@
   },
   "dependencies": {
     "child_process": "^1.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rburkard/flowstate.git"
+  },
+  "homepage": "https://www.roman.ninja/flowstate"
 }
