@@ -1,5 +1,3 @@
-<img src="images/flowstateicon.png" width="200" />
-
 # flowstate README
 
 Hello, fellow connoisseur of the Flow State.
