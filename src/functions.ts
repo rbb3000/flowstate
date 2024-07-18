@@ -51,15 +51,16 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 
 			  const updateCountdown = () => {
 				if (secondsRemaining > 0) {
-					vscode.window.setStatusBarMessage(`Countdown: ${secondsRemaining} seconds remaining`);
 					secondsRemaining--;
 					context.globalState.update(GlobalState.secondsRemaining, secondsRemaining);
 					setStatusBarTextAndTime(generateStatusBarText(newSessionObjective), secondsRemaining);
 				} else {
 					clearInterval(countdown);
-					vscode.window.setStatusBarMessage('');
-					vscode.window.showInformationMessage('Countdown finished!');
+					vscode.window.showInformationMessage('Session finished!');
+					context.globalState.update(GlobalState.isFlowState, false);
+					context.globalState.update(GlobalState.sessionObjective, '');
 					context.globalState.update(GlobalState.secondsRemaining, 0);
+					setStatusBarTextAndTime('$(coffee)', 0);
 				}
 			};
 	

@@ -33,7 +33,11 @@ export type EntryType = {
 let statusBarIcon:vscode.StatusBarItem;
 
 const setStatusBarTextAndTime = (text: string, time: number) => {
-	statusBarIcon.text = `${text} - ${Math.floor(time/60)} min left`;
+	if(time > 0){
+		statusBarIcon.text = `${text} | ${Math.floor(time/60 + 1)} min left`;
+	} else {
+		statusBarIcon.text = text;
+	}
 };
 
 // Dev
