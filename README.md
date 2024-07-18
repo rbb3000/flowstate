@@ -9,9 +9,10 @@ Hello, fellow connoisseur of the Flow State.
 
 ## Implemented Features
 
-* Detect Flow State using basic logic
-* Show the current state in the status bar
-* Dim the theme colors when in Flow State
+* Click on the small Coffee Icon in your Status Bar to start
+* Set your goal for the coding session and the time you want to focus separted by ":" (e.g. Finish authentication : 45)
+* Connect Slack
+* Automatically be set to do not disturb in slack
 
 Normal State Icon (Status Bar) 
 
