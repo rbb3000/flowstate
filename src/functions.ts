@@ -82,8 +82,11 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 				// addTimelineEntry( Number(value));
 				deactivateFlowState(context, statusBarItem);
 				vscode.window.showInformationMessage(`Session "${sessionObjective}" ended`);
+				vscode.window.showInformationMessage('Session finished!');
+				context.globalState.update(GlobalState.isFlowState, false);
 				context.globalState.update(GlobalState.sessionObjective, '');
 				context.globalState.update(GlobalState.secondsRemaining, 0);
+				setStatusBarTextAndTime('$(coffee)', 0);
 			} else {
 			  vscode.window.showInformationMessage(`Continuing session "${sessionObjective}"`);
 			}
