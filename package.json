@@ -3,7 +3,7 @@
   "displayName": "flowstate",
   "description": "Stay in the Flow State",
   "version": "0.0.2",
-  "publisher": "roman.ninja",
+  "publisher": "romanninja",
   "icon": "images/flowstateicon.png",
   "engines": {
     "vscode": "^1.80.0"
