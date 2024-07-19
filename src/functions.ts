@@ -45,7 +45,14 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 			  context.globalState.update(GlobalState.sessionObjective, newSessionObjective);
 
 			  if(userId){
-				  const statusSet = await setSlackStatus(userId, sessionTime);
+				  let statusSet = await setSlackStatus(userId, sessionTime);
+				  // quickfix try twice
+				  if(!statusSet){
+					let userid2 = await getUserId(context);
+					if(userid2){
+						statusSet = await setSlackStatus(userid2, sessionTime);
+					}
+				  }
 				  context.globalState.update(GlobalState.slackStatus, statusSet);
 			  }
 
@@ -55,11 +62,8 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 					context.globalState.update(GlobalState.secondsRemaining, secondsRemaining);
 					setStatusBarTextAndTime(generateStatusBarText(newSessionObjective), secondsRemaining);
 				} else {
-					clearInterval(countdown);
 					vscode.window.showInformationMessage('Session finished!');
-					context.globalState.update(GlobalState.isFlowState, false);
-					context.globalState.update(GlobalState.sessionObjective, '');
-					context.globalState.update(GlobalState.secondsRemaining, 0);
+					endSession(context);
 					setStatusBarTextAndTime('$(coffee)', 0);
 				}
 			};
@@ -67,6 +71,7 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 			// Set an interval to update every second
 			updateCountdown(); // Initial call to display immediately
 			const countdown = setInterval(updateCountdown, 1000);
+			context.globalState.update(GlobalState.timerId, countdown);
 			  
 			  // vscode.window.showInformationMessage(`You entered: ${value}`);
 			} else {
@@ -82,10 +87,7 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 				// addTimelineEntry( Number(value));
 				deactivateFlowState(context, statusBarItem);
 				vscode.window.showInformationMessage(`Session "${sessionObjective}" ended`);
-				vscode.window.showInformationMessage('Session finished!');
-				context.globalState.update(GlobalState.isFlowState, false);
-				context.globalState.update(GlobalState.sessionObjective, '');
-				context.globalState.update(GlobalState.secondsRemaining, 0);
+				endSession(context);
 				setStatusBarTextAndTime('$(coffee)', 0);
 			} else {
 			  vscode.window.showInformationMessage(`Continuing session "${sessionObjective}"`);
@@ -94,6 +96,16 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 	}
 };
 
+export const endSession = (context: vscode.ExtensionContext) => {
+	const countdown = context.globalState.get(GlobalState.timerId);
+	if(countdown){
+		clearInterval(countdown as any);
+	}
+	context.globalState.update(GlobalState.isFlowState, false);
+	context.globalState.update(GlobalState.timerId, undefined)
+	context.globalState.update(GlobalState.sessionObjective, '');
+	context.globalState.update(GlobalState.secondsRemaining, 0);
+};
 
 export const getUserId = async (context: vscode.ExtensionContext) => {
 	let userId: string | undefined = context.globalState.get(GlobalState.userId);
