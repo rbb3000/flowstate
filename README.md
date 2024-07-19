@@ -4,7 +4,7 @@ Hello, fellow connoisseur of the Flow State.
 
 Click the Coffee Icon in the Status Bar after installing the Extension to start.
 
-This extension helps you to get into / and stay in the flow state while coding. Start your session by setting a goal 🏅 and a timer ⏱️ for it. The extension will display your goal 🏅 and timer ⏱️ in the statusbar and set you to Do Not Disturb 🙅‍♂️ on Slack (further integrations coming).
+This extension helps you to get into / and stay in the flow state while coding. Start your session by setting a goal 🏅 and a timer ⏱️ for it. The extension will set you to Do Not Disturb 🙅‍♂️ on Slack for the set time (further integrations coming).
 
 What helps you get into the flow or stay in it? Mention it in the comment section.
 
