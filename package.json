@@ -2,7 +2,7 @@
   "name": "flowstate",
   "displayName": "flowstate",
   "description": "Stay in the Flow State",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "romanninja",
   "icon": "images/flowstateicon.png",
   "engines": {
