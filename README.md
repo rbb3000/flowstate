@@ -73,3 +73,11 @@ Initial release of Flow State
 
 * Set goal and timer in status bar
 * Automatically set Slack to Do Not Disturb for the set time
+
+### 0.0.6
+
+* Fix slack integration and duplicate timer
+
+### 0.0.7
+
+* Type --resetslack to connect to a different workspace with the next session

@@ -16,6 +16,9 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 			prompt: "What is your objective and how much time do you plan for this session?",
 			placeHolder: "Session objective : time in minutes"
 		  }).then(async (value) => {
+			if (value === '--resetslack'){
+				context.globalState.update(GlobalState.userId, undefined);
+			}
 			if (value !== undefined) {
 			  const [newSessionObjective, newSessionTimeString] = value.split(':');
 
@@ -101,8 +104,9 @@ export const endSession = (context: vscode.ExtensionContext) => {
 	if(countdown){
 		clearInterval(countdown as any);
 	}
+
 	context.globalState.update(GlobalState.isFlowState, false);
-	context.globalState.update(GlobalState.timerId, undefined)
+	context.globalState.update(GlobalState.timerId, undefined);
 	context.globalState.update(GlobalState.sessionObjective, '');
 	context.globalState.update(GlobalState.secondsRemaining, 0);
 };
