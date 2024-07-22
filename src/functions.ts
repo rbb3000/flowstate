@@ -10,14 +10,23 @@ import { GlobalState } from './types';
 
 export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem, setStatusBarTextAndTime: (text: string, time: number) => void) => {
     const sessionObjective = context.globalState.get(GlobalState.sessionObjective);
+	let userId: string | undefined = context.globalState.get(GlobalState.userId);
+
 
 	if(sessionObjective === '' || !sessionObjective){
+		if(!userId){
+			getUserId(context);
+			return;
+		}
+
 		vscode.window.showInputBox({
 			prompt: "What is your objective and how much time do you plan for this session?",
 			placeHolder: "Session objective : time in minutes"
 		  }).then(async (value) => {
+
 			if (value === '--resetslack'){
 				context.globalState.update(GlobalState.userId, undefined);
+				return;
 			}
 			if (value !== undefined) {
 			  const [newSessionObjective, newSessionTimeString] = value.split(':');
@@ -117,6 +126,7 @@ export const getUserId = async (context: vscode.ExtensionContext) => {
 		userId = await connectSlack(context);
 	}
 
+	context.globalState.update(GlobalState.userId, userId);
 	return userId;
 };
 
