@@ -52,6 +52,23 @@ export const writeToFile = <T>(data: Array<T>, fileName: string) => {
   }
 };
 
+export const getTimerId = (timeoutObject: any) => {
+  const symbols = Object.getOwnPropertySymbols(timeoutObject);
+
+  // Finding the asyncId and triggerId
+  const asyncIdSymbol = symbols.find(sym => sym.toString() === 'Symbol(asyncId)');
+  const triggerIdSymbol = symbols.find(sym => sym.toString() === 'Symbol(triggerId)');
+
+  // Extracting the IDs
+  const asyncId = timeoutObject[asyncIdSymbol!];
+  const triggerId = timeoutObject[triggerIdSymbol!];
+
+  return {
+      asyncId,
+      triggerId
+  };
+}
+
 // export const disableNotifications = (config: vscode.WorkspaceConfiguration) => {
 
 //     config.update('notifications.enabled', false, vscode.ConfigurationTarget.Global)

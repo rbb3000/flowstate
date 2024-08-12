@@ -4,5 +4,6 @@ export enum GlobalState {
     isFlowState = 'isFlowState',
     secondsRemaining = 'secondsRemaining',
     slackStatus = 'slackStatus',
-    timerId = 'timerId'
+    timerId = 'timerId',
+    returningUser = 'returningUser'
 }

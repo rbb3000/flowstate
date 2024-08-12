@@ -2,50 +2,55 @@ import * as vscode from 'vscode';
 import { WebClient } from '@slack/web-api';
 import fetch from 'node-fetch';
 import { randomUUID } from 'crypto';
-import { checkIfNumber, generateStatusBarText, writeToFile } from './helperFunctions';
+import { checkIfNumber, generateStatusBarText, getTimerId, writeToFile } from './helperFunctions';
 import { EntryType } from './extension';
 import { updateSlack } from './api';
 import { baseUrl } from './constants';
 import { GlobalState } from './types';
+import { getWebviewContent } from './webviewFunctions';
 
 export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem, setStatusBarTextAndTime: (text: string, time: number) => void) => {
     const sessionObjective = context.globalState.get(GlobalState.sessionObjective);
-	let userId: string | undefined = context.globalState.get(GlobalState.userId);
 
 
 	if(sessionObjective === '' || !sessionObjective){
-		if(!userId){
-			getUserId(context);
-			return;
-		}
-
 		vscode.window.showInputBox({
 			prompt: "What is your objective and how much time do you plan for this session?",
 			placeHolder: "Session objective : time in minutes"
 		  }).then(async (value) => {
 
+			const userId: string | undefined = context.globalState.get(GlobalState.userId);
+
 			if (value === '--resetslack'){
+				vscode.window.showInformationMessage('Slack token reset.');
 				context.globalState.update(GlobalState.userId, undefined);
+				connectSlack(context);
 				return;
 			}
+
+			if (value === '--resetonboarding'){
+				vscode.window.showInformationMessage('Onboarding reset.');
+				context.globalState.update(GlobalState.returningUser, undefined);
+				return;
+			}
+
+			if (value === '--resetglobalstate'){
+				context.globalState.update(GlobalState.userId, undefined);
+				context.globalState.update(GlobalState.isFlowState, undefined);
+				context.globalState.update(GlobalState.secondsRemaining, undefined);
+				context.globalState.update(GlobalState.sessionObjective, undefined);
+				context.globalState.update(GlobalState.returningUser, undefined);
+				context.globalState.update(GlobalState.timerId, undefined);
+				context.globalState.update(GlobalState.slackStatus, undefined);
+				return;
+			}
+
 			if (value !== undefined) {
 			  const [newSessionObjective, newSessionTimeString] = value.split(':');
-
-              const maxCharsSessionObjective = 35;
-
-              // updateThemeColor(config);
-          
-            //   if(newSessionObjective){
-            //       // setUserStatusInSlack(`${sessionObjective.slice(10)}`, ':meeting:');
-            //       const statusBarText = `$(rocket)${newSessionObjective && (' ' + newSessionObjective.slice(0,maxCharsSessionObjective))}${newSessionObjective.length > maxCharsSessionObjective ? '...' : ''}`;
-			// 	  setStatusBarTextAndTime(statusBarText, 0);
-            //   }
               
               statusBarItem.show();
 
               context.globalState.update(GlobalState.isFlowState, true);
-
-			  const userId = await getUserId(context);
 
 			  context.globalState.update(GlobalState.userId, userId);
 
@@ -58,13 +63,6 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 
 			  if(userId){
 				  let statusSet = await setSlackStatus(userId, sessionTime);
-				  // quickfix try twice
-				  if(!statusSet){
-					let userid2 = await getUserId(context);
-					if(userid2){
-						statusSet = await setSlackStatus(userid2, sessionTime);
-					}
-				  }
 				  context.globalState.update(GlobalState.slackStatus, statusSet);
 			  }
 
@@ -83,7 +81,7 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 			// Set an interval to update every second
 			updateCountdown(); // Initial call to display immediately
 			const countdown = setInterval(updateCountdown, 1000);
-			context.globalState.update(GlobalState.timerId, countdown);
+			context.globalState.update(GlobalState.timerId, JSON.stringify(countdown));
 			  
 			  // vscode.window.showInformationMessage(`You entered: ${value}`);
 			} else {
@@ -119,17 +117,6 @@ export const endSession = (context: vscode.ExtensionContext) => {
 	context.globalState.update(GlobalState.sessionObjective, '');
 	context.globalState.update(GlobalState.secondsRemaining, 0);
 };
-
-export const getUserId = async (context: vscode.ExtensionContext) => {
-	let userId: string | undefined = context.globalState.get(GlobalState.userId);
-	if(!userId){
-		userId = await connectSlack(context);
-	}
-
-	context.globalState.update(GlobalState.userId, userId);
-	return userId;
-};
-
 export const setSlackStatus = async (userid: string, time: number) => {
 	try{
 		await updateSlack(userid, time);
@@ -161,6 +148,37 @@ export const deactivateFlowState = (context: vscode.ExtensionContext, myStatusBa
 	myStatusBarItem.text = `$(coffee)`;
 	myStatusBarItem.show();
 	context.globalState.update(GlobalState.isFlowState, false);
+};
+
+export const showWelcomeMessage = (context: vscode.ExtensionContext) => {
+	const panel = vscode.window.createWebviewPanel(
+        'welcome', // Identifies the type of the webview. Used internally
+        'Welcome to Flowstate!', // Title of the panel displayed to the user
+        vscode.ViewColumn.One, // Editor column to show the new webview panel in
+        {
+            enableScripts: true // Enable scripts in the webview
+        }
+    );
+
+    panel.webview.html = getWebviewContent(context, panel);
+
+	    // Listen for messages from the webview
+		panel.webview.onDidReceiveMessage(
+			message => {
+				switch (message.command) {
+					case 'connectSlack':
+						vscode.window.showInformationMessage('Connecting slack..');
+						// Trigger further actions or commands here
+						// showHelpPanel(context);
+						connectSlack(context);
+						return;
+				}
+			},
+			undefined,
+			context.subscriptions
+		);
+
+	context.globalState.update(GlobalState.returningUser, true);
 };
 
 

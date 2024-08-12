@@ -1,7 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { showInput } from './functions';
+import { showInput, showWelcomeMessage } from './functions';
+import { GlobalState } from './types';
 
 
 // Initialize a Slack Web API client
@@ -57,9 +58,22 @@ const timeline: Array<EntryType> = [];
 export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 
+	const returningUser = context.globalState.get(GlobalState.returningUser);
+
+	// context.globalState.update(GlobalState.userId, undefined);
+	// context.globalState.update(GlobalState.isFlowState, undefined);
+	// context.globalState.update(GlobalState.secondsRemaining, undefined);
+	// context.globalState.update(GlobalState.sessionObjective, undefined);
+	// context.globalState.update(GlobalState.returningUser, undefined);
+	// context.globalState.update(GlobalState.timerId, undefined);
+	// context.globalState.update(GlobalState.slackStatus, undefined);
+	
+	if(!returningUser){
+		showWelcomeMessage(context);
+	}
+
 	// create a new status bar item
 	statusBarIcon = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-
 
 	// Add a click event listener to the status bar item
 	statusBarIcon.command = "flowstate.showInputBox";
