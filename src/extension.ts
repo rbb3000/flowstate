@@ -20,18 +20,6 @@ export type EntryType = {
 	time: number, lines: number, characters: number, objective: string, rating?: number
 };
 
-// Mutable values
-// let myStatusBarItem: vscode.StatusBarItem;
-// let addedLinesTotal = 0;
-// let addedCharactersTotal = 0;
-// let movingAverage = {chars: 0, lines: 0};
-// let standardThemeConfig: Record<string, {[ColorTypes.statusBackground]: string, [ColorTypes.statusDebuggingBackground]: string}>;
-// let isFlowState = false;
-// let sessionObjective: string = '';
-// let sessionTimeString: string = '';
-// let userid = undefined;
-// let slackStatus = false;
-// let secondsRemaining = 0;
 let statusBarIcon:vscode.StatusBarItem;
 
 const setStatusBarTextAndTime = (text: string, time: number) => {

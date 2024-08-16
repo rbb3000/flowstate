@@ -24,6 +24,45 @@ export const setSlackStatus = async (userid: string, time: number) => {
 
 };
 
+export const findNumberInString = (input: string): [number | undefined, string] => {
+    if (typeof input !== 'string') {return [undefined, input]};
+
+    // Regular expression to match numbers with optional space and "min" or "minutes" after them
+    const regex = /(\d+)(\s*(min|minutes))?/g;
+    let matches = [];
+    let match;
+
+    // Find all matches in the string
+    while ((match = regex.exec(input)) !== null) {
+        matches.push({ number: Number(match[1]), index: match.index, length: match[0].length });
+    }
+
+    if (matches.length === 0) {
+        return [undefined, input.trim()];
+    }
+
+    // Sort matches: prioritize those with "min" or "minutes" and then by their index (reverse order)
+    matches.sort((a, b) => {
+        const aHasMin = /min|minutes/.test(input.slice(a.index));
+        const bHasMin = /min|minutes/.test(input.slice(b.index));
+
+        if (aHasMin && !bHasMin) {return 1};
+        if (!aHasMin && bHasMin) {return -1};
+
+        return b.index - a.index;
+    });
+
+    // Get the best match
+    const bestMatch = matches[0];
+
+    // Remove the matched portion including the "min" or "minutes" part
+    let resultString = input.slice(0, bestMatch.index) + input.slice(bestMatch.index + bestMatch.length);
+    resultString = resultString.replace(/\s+/g, ' ').trim(); // Clean up any extra whitespace
+
+    // Return the number and the rest of the string
+    return [bestMatch.number, resultString];
+}
+
 export const connectSlack = async (context: vscode.ExtensionContext) => {
 		const userid = randomUUID();
 		const uri = vscode.Uri.parse(baseUrl+ `/auth/slack?userid=${userid}`);

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GlobalState } from './types';
-import { connectSlack, endSession, setSlackStatus } from './functions';
+import { connectSlack, endSession, findNumberInString, setSlackStatus } from './functions';
 import { checkIfNumber, generateStatusBarText } from './helperFunctions';
 
 let countdown: NodeJS.Timer;
@@ -10,8 +10,8 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 
 	if(!sessionObjective){
 		vscode.window.showInputBox({
-			prompt: "What is your objective and how much time do you plan for this session? e.g. fix sidebar : 30",
-			placeHolder: "Session objective : time in minutes"
+			prompt: "What is your objective and how much time do you plan for this session?",
+			placeHolder: "e.g. Fix Sidebar 20 min"
 		  }).then(async (value) => {
 
 			const userId: string | undefined = context.globalState.get(GlobalState.userId);
@@ -42,7 +42,10 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 			if (value !== undefined) {
 				
 				setStatusBarTextAndTime('$(rocket) Starting session...', 0);
-			  const [newSessionObjective, newSessionTimeString] = value.split(':');
+
+
+			  let [sessionTime, newSessionObjective] = findNumberInString(value);
+
               
               statusBarItem.show();
 
@@ -50,7 +53,8 @@ export const showInput = (context: vscode.ExtensionContext, statusBarItem: vscod
 
 			  context.globalState.update(GlobalState.userId, userId);
 
-			  const sessionTime = checkIfNumber(newSessionTimeString) ? Number(newSessionTimeString) : 45;
+				// use 45 as default if no number found
+				sessionTime = sessionTime ? sessionTime : 45;
 
 			  let secondsRemaining = sessionTime * 60;
 
